@@ -80,7 +80,9 @@ RESTART
 		BRnp END_CHECK_SIGN									;if != 0, skip checking the sign
 		CHECK_SIGN											
 			LDR R0, R3, #0										;load into R0 the data in the first index
-			STR R0, R0, #0
+			LD R6, neg
+			NOT R6, R6
+			ADD R6, R6, #1
 			ADD R0, R0, R6										;check if the value is the negative symbol
 			BRz NEGATIVE_2										;if the result is zero, go to negative branch
 			BRnp POSITIVE_2									;if result != 0, go to positive branch
@@ -91,7 +93,7 @@ RESTART
 				BRnzp ANSWER									;go back to start of loop
 			END_NEGATIVE_2
 			POSITIVE_2
-				LD R7, zero										;if final number is positive, load the value 0 into R7
+				LD R7, zero
 				ADD R3, R3, #1									;go to next index in array
 				ADD R4, R4, #-1								;decrement counter
 				BRnzp	ANSWER									;go back to start of loop
@@ -99,7 +101,7 @@ RESTART
 		END_CHECK_SIGN
 		ADD R1, R1, #0											;check the value of the final number
 		BRz END_MULTIPLY										;if it's zero, skip multiplication
-		LDR R6, R1, #0											;Load current value of final number into R6
+		ADD R6, R1, #0											;Load current value of final number into R6
 		LD R0, counter											;Load counter (10) into R0
 		MULTIPLY													;we want to multiply the current value in R1 by 10
 			ADD R1, R1, R6										;add the current current value of the number by the start value, store in R1
@@ -110,23 +112,34 @@ RESTART
 		LDR R0, R3, #0											;load into R0 the value in the current index of our user-input array
 		ADD R0, R0, R2											;convert it from char to decimal
 		ADD R1, R1, R0											;add the converted value to r1
+		ADD R3, R3, #1
 		ADD R4, R4, #-1										;decrement counter
-		BRzp ANSWER												;if counter >= 0 loop
-		BRn END_ANSWER											;if counter < 0 end loop
+		BRp ANSWER												;if counter >= 0 loop
+		BRnz END_ANSWER											;if counter < 0 end loop
 	END_ANSWER
 	
-
-		
-
-
+	ADD R7, R7, #0
+	BRp NEG_ANSWER
+	BRnz END_RESTART
+	NEG_ANSWER
+		NOT R1, R1
+		ADD R1, R1, #1
+		BRnzp END_RESTART
 		
 
 ERROR
 	LEA R0, error_message
 	PUTS
-	LD R3, #1
+	LD R0, zero
+	ERASE_ARRAY
+		STR R0, R3, #0
+		ADD R3, R3, #-1
+		ADD R4, R4, #-1
+		BRp ERASE_ARRAY
+		BRnz END_ERASE_ARRAY
+	END_ERASE_ARRAY
 	ADD R3, R3, #0
-	BRp RESTART
+	BRnzp RESTART
 END_ERROR
 
 END_RESTART
@@ -148,7 +161,7 @@ pos							.FILL						#43
 error_message				.STRINGZ					"\nInput an invalid character, restarting program\n"
 zero							.FILL						#0
 one							.FILL						#1
-counter						.FILL						#10
+counter						.FILL						#9
 enter							.FILL						#-10
 .orig x4000
 								.BLKW						#6

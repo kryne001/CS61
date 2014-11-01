@@ -94,6 +94,12 @@ RESTART
 			END_NEGATIVE_2
 			POSITIVE_2
 				LD R7, zero
+				LDR R0, R3, #0
+				LD R6, pos
+				NOT R6, R6
+				ADD R6, R6, #1
+				ADD R0, R0, R6
+				BRnp END_CHECK_SIGN
 				ADD R3, R3, #1									;go to next index in array
 				ADD R4, R4, #-1								;decrement counter
 				BRnzp	ANSWER									;go back to start of loop

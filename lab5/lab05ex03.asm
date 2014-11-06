@@ -2,7 +2,7 @@
 ;Name: Kyler Rynear
 ;Login: kryne001
 ;Email address: kryne001@ucr.edu
-;Assignment: lab 05, exercise 02
+;Assignment: lab 05, exercise 03
 ;Lab Section: <021 or 022>
 ;TA: Bryan Marsh
 ;

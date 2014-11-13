@@ -54,8 +54,8 @@ LOOP
 	BRn NEGATIVE
 	POSITIVE
 		LD R4, pos
-		ADD R1, R1, R4
 		ADD R1, R1, R1
+		ADD R1, R1, R4
 		ADD R2, R2, R2
 		ADD R3, R3, #-1
 		BRp LOOP
@@ -63,8 +63,8 @@ LOOP
 	END_POSITIVE
 	NEGATIVE
 		LD R4, neg
-		ADD R1, R1, R4
 		ADD R1, R1, R1
+		ADD R1, R1, R4
 		ADD R2, R2, R2
 		ADD R3, R3, #-1
 		BRp LOOP

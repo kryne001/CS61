@@ -12,11 +12,13 @@
 LD R3, ASSN_4_SUBROUTINE
 JSRR R3
 
-ADD R2, R2, #1
+ADD R1, R1, #1
 
 LD R3, OUTPUT_SUBROUTINE
 JSRR R3
 
+LD R0, #10
+OUT
 HALT
 ;---------------------
 ;Data orig 3000
@@ -29,7 +31,7 @@ mem							.FILL					x4000
 .orig x3400
 
 ST R0, BACKUP_R0_3400
-ST R1, BACKUP_R1_3400
+ST R2, BACKUP_R2_3400
 ST R3, BACKUP_R3_3400
 ST R4, BACKUP_R4_3400
 ST R5, BACKUP_R5_3400
@@ -177,7 +179,7 @@ END_ERROR
 END_RESTART
 
 LD R0, BACKUP_R0_3400
-LD R1, BACKUP_R1_3400
+LD R2, BACKUP_R2_3400
 LD R3, BACKUP_R3_3400
 LD R4, BACKUP_R4_3400
 LD R5, BACKUP_R5_3400
@@ -190,6 +192,13 @@ RET
 ;Data x3400
 ;----------
 
+BACKUP_R0_3400				.BLKW						#1
+BACKUP_R2_3400				.BLKW						#1
+BACKUP_R3_3400				.BLKW						#1
+BACKUP_R4_3400				.BLKW						#1
+BACKUP_R5_3400				.BLKW						#1
+BACKUP_R6_3400				.BLKW						#1
+BACKUP_R7_3400				.BLKW						#1
 OUTPUT						.STRINGZ					"Input a positive or negative decimal number (less than or equal to 32766) followed by ENTER\n"
 converter					.FILL						#48
 mem							.FILL						x4000
@@ -208,8 +217,90 @@ enter							.FILL						#-10
 ;----------------------------
 .orig x3700
 
-LD R4, te
+LD R3, tenthous
+NOT R3, R3
+ADD R3, R3, #1
+LD R5, zero_1
+TENTHOUSAND
+	ADD R4, R1, #0
+	ADD R4, R1, R3
+	BRn END_TENTHOUSAND
+	ADD R1, R1, R3
+	ADD R5, R5, #1
+	BR TENTHOUSAND
+END_TENTHOUSAND
+ADD R0, R5, #0
+LD R4, converter_1
+ADD R0, R0, R4
+OUT
 
+LD R3, thous
+NOT R3, R3
+ADD R3, R3, #1
+LD R5, zero_1
+THOUSAND
+	ADD R4, R1, #0
+	ADD R4, R1, R3
+	BRn END_THOUSAND
+	ADD R1, R1, R3
+	ADD R5, R5, #1
+	BR THOUSAND
+END_THOUSAND
+ADD R0, R5, #0
+LD R4, converter_1
+ADD R0, R0, R4
+OUT
+
+LD R3, hunnid
+NOT R3, R3
+ADD R3, R3, #1
+LD R5, zero_1
+HUNDREDS
+	ADD R4, R1, #0
+	ADD R4, R1, R3
+	BRn END_HUNDREDS
+	ADD R1, R1, R3
+	ADD R5, R5, #1
+	BR HUNDREDS
+END_HUNDREDS
+ADD R0, R5, #0
+LD R4, converter_1
+ADD R0, R0, R4
+OUT
+
+LD R3, tens
+NOT R3, R3
+ADD R3, R3, #1
+LD R5, zero_1
+THE_TENS
+	ADD R4, R1, #0
+	ADD R4, R1, R3
+	BRn END_THE_TENS
+	ADD R1, R1, R3
+	ADD R5, R5, #1
+	BR THE_TENS
+END_THE_TENS
+ADD R0, R5, #0
+LD R4, converter_1
+ADD R0, R0, R4
+OUT
+
+LD R3, ones
+NOT R3, R3
+ADD R3, R3, #1
+LD R5, zero_1
+THE_ONES
+	ADD R4, R1, #0
+	ADD R4, R1, R3
+	BRn END_THE_ONES
+	ADD R1, R1, R3
+	ADD R5, R5, #1
+	BR THE_ONES
+END_THE_ONES
+ADD R0, R5, #0
+LD R4, converter_1
+ADD R0, R0, R4
+OUT
 ;--------------
 ;data x3700
 ;--------------
@@ -218,19 +309,7 @@ thous						.FILL					#1000
 hunnid					.FILL					#100
 tens						.FILL					#10
 ones						.FILL					#1
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+zero_1					.FILL					#0
+converter_1				.FILL					#48
 .orig x4000
-								.BLKW						#6
+							.BLKW						#6

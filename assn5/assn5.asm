@@ -2,7 +2,7 @@
 ;Name: Kyler Rynear
 ;Login: kryne001
 ;Email address: kryne001@ucr.edu
-;Assignment: lab 06, exercise 03
+;Assignment: assignment 5
 ;Lab Section: <021 or 022>
 ;TA: Bryan Marsh
 ;
@@ -39,8 +39,8 @@ ADD R6, R6, #1
 ADD R4, R4, R6
 BRz SKIP_OUTPUT
 
-;LD R3, SR_OUTPUT
-;JSRR R3
+LD R3, SR_OUTPUT
+JSRR R3
 
 SKIP_OUTPUT
 
@@ -51,10 +51,10 @@ HALT
 ;------------------
 
 
-first_message					.STRINGZ						"Input the first decimal number (between #-32767 and +32767) to be multiplied"
+first_message					.STRINGZ						"Input the first decimal number (between #-32767 and +32767) to be multiplied\n"
 SR_INPUT_1						.FILL							x3200
 SR_INPUT_2						.FILL							x3700
-second_message					.STRINGZ						"Input the second decimal number"
+second_message					.STRINGZ						"Input the second decimal number\n"
 SR_MULTIPLICATION				.FILL							x4200
 SR_OUTPUT						.FILL							x4700
 mem_twonumber_array			.FILL							x5016
@@ -75,8 +75,6 @@ ST R7, BACKUP_R7_3200
 
 RESTART
 
-	LEA R0, OUTPUT												;R0 character input
-	PUTS															;R1 open register for calculations 
 																	;R2 converter
 	LD R2, converter											;R3 mem location of array
 	NOT R2, R2													;R4 counter
@@ -233,13 +231,12 @@ BACKUP_R4_3200					.BLKW					#1
 BACKUP_R5_3200					.BLKW					#1
 BACKUP_R6_3200					.BLKW					#1
 BACKUP_R7_3200					.BLKW					#1
-OUTPUT						.STRINGZ					"Input a positive or negative decimal number (max 5 digits) followed by ENTER\n"
 converter					.FILL						#48
 mem							.FILL						x5000
 above							.FILL						#57
 neg							.FILL						#45
 pos							.FILL						#43
-error_message				.STRINGZ					"\nInput an invalid character, restarting program\n"
+error_message				.STRINGZ					"\nInput an invalid character, restarting input\n"
 zero							.FILL						#0
 one							.FILL						#1
 counter						.FILL						#9
@@ -261,8 +258,6 @@ ST R7, BACKUP_R7_3700
 
 RESTART_1
 
-	LEA R0, OUTPUT_1											;R0 character input
-	PUTS															;R1 open register for calculations 
 																	;R2 converter
 	LD R2, converter_1										;R3 mem location of array
 	NOT R2, R2													;R4 counter
@@ -418,13 +413,12 @@ BACKUP_R4_3700					.BLKW					#1
 BACKUP_R5_3700					.BLKW					#1
 BACKUP_R6_3700					.BLKW					#1
 BACKUP_R7_3700					.BLKW					#1
-OUTPUT_1							.STRINGZ					"Input a positive or negative decimal number (max 5 digits) followed by ENTER\n"
 converter_1					.FILL						#48
 mem_1							.FILL						x500A
 above_1						.FILL						#57
 neg_1							.FILL						#45
 pos_1							.FILL						#43
-error_message_1			.STRINGZ					"\nInput an invalid character, restarting program\n"
+error_message_1			.STRINGZ					"\nInput an invalid character, restarting input\n"
 zero_1						.FILL						#0
 one_1							.FILL						#1
 counter_1					.FILL						#9
@@ -610,6 +604,124 @@ multiplier							.blkw						#1
 oneee									.FILL						#1
 fivee									.FILL						#5
 overflow_message					.STRINGZ					"The two numbers input, when multiplied, exceed the limit of + or - 32767"
+
+
+;--------------------------
+;output subroutine
+;--------------------------
+.orig x4700
+
+LEA R0, FIRST_OUTPUT_MESSAGE
+PUTS
+
+ADD R1, R1, #0
+BRn OUTPUT_A_NEGATIVE
+BRzp END_OUTPUT_A_NEGATIVE
+OUTPUT_A_NEGATIVE
+	LD R0, negative_sign
+	OUT
+	NOT R1, R1
+	ADD R1, R1, #1
+END_OUTPUT_A_NEGATIVE
+
+LD R3, tenthous
+NOT R3, R3
+ADD R3, R3, #1
+LD R5, zero_12
+TENTHOUSAND
+	ADD R4, R1, #0
+	ADD R4, R1, R3
+	BRn END_TENTHOUSAND
+	ADD R1, R1, R3
+	ADD R5, R5, #1
+	BR TENTHOUSAND
+END_TENTHOUSAND
+ADD R0, R5, #0
+LD R4, converter_12
+ADD R0, R0, R4
+OUT
+
+LD R3, thous
+NOT R3, R3
+ADD R3, R3, #1
+LD R5, zero_12
+THOUSAND
+	ADD R4, R1, #0
+	ADD R4, R1, R3
+	BRn END_THOUSAND
+	ADD R1, R1, R3
+	ADD R5, R5, #1
+	BR THOUSAND
+END_THOUSAND
+ADD R0, R5, #0
+LD R4, converter_12
+ADD R0, R0, R4
+OUT
+
+LD R3, hunnid
+NOT R3, R3
+ADD R3, R3, #1
+LD R5, zero_12
+HUNDREDS
+	ADD R4, R1, #0
+	ADD R4, R1, R3
+	BRn END_HUNDREDS
+	ADD R1, R1, R3
+	ADD R5, R5, #1
+	BR HUNDREDS
+END_HUNDREDS
+ADD R0, R5, #0
+LD R4, converter_12
+ADD R0, R0, R4
+OUT
+
+LD R3, tens
+NOT R3, R3
+ADD R3, R3, #1
+LD R5, zero_12
+THE_TENS
+	ADD R4, R1, #0
+	ADD R4, R1, R3
+	BRn END_THE_TENS
+	ADD R1, R1, R3
+	ADD R5, R5, #1
+	BR THE_TENS
+END_THE_TENS
+ADD R0, R5, #0
+LD R4, converter_12
+ADD R0, R0, R4
+OUT
+
+LD R3, ones
+NOT R3, R3
+ADD R3, R3, #1
+LD R5, zero_12
+THE_ONES
+	ADD R4, R1, #0
+	ADD R4, R1, R3
+	BRn END_THE_ONES
+	ADD R1, R1, R3
+	ADD R5, R5, #1
+	BR THE_ONES
+END_THE_ONES
+ADD R0, R5, #0
+LD R4, converter_12
+ADD R0, R0, R4
+OUT
+
+RET
+;--------------
+;data output subroutine
+;--------------
+tenthous					.FILL					#10000
+thous						.FILL					#1000
+hunnid					.FILL					#100
+tens						.FILL					#10
+ones						.FILL					#1
+zero_12					.FILL					#0
+converter_12			.FILL					#48
+negative_sign			.FILL					#45
+FIRST_OUTPUT_MESSAGE	.STRINGZ				"The result of the multiplication is "
 ;-------------------
 ;first number array
 ;-------------------

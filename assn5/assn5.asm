@@ -611,6 +611,8 @@ overflow_message					.STRINGZ					"The two numbers input, when multiplied, excee
 ;--------------------------
 .orig x4700
 
+ST R7, BACKUP_R7_4700
+
 LEA R0, FIRST_OUTPUT_MESSAGE
 PUTS
 
@@ -709,6 +711,7 @@ LD R4, converter_12
 ADD R0, R0, R4
 OUT
 
+LD R7, BACKUP_R7_4700
 RET
 ;--------------
 ;data output subroutine
@@ -722,6 +725,7 @@ zero_12					.FILL					#0
 converter_12			.FILL					#48
 negative_sign			.FILL					#45
 FIRST_OUTPUT_MESSAGE	.STRINGZ				"The result of the multiplication is "
+BACKUP_R7_4700			.blkw					#1
 ;-------------------
 ;first number array
 ;-------------------

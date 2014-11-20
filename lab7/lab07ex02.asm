@@ -20,8 +20,8 @@ LD R3, palindrome_subroutine
 JSRR R3
 
 ADD R4, R4, #0
-BRz IS_PALINDROME
-BRp ISNT_PALINDROME
+BRz ISNT_PALINDROME
+BRp IS_PALINDROME
 
 IS_PALINDROME
 	LEA R0, is_palindrome_message
@@ -42,6 +42,9 @@ HALT
 
 output_message					.STRINGZ					"Please enter a string, terminated by inputting the enter character.\n"
 input_subroutine				.FILL						x3400
+is_palindrome_message		.STRINGZ					"\nThe input word is a palindrome\n"
+isnt_palindrome_message		.STRINGZ					"\nThe input word isn't a palindrome\n"
+palindrome_subroutine		.FILL						x3700
 
 ;-----------------
 ;input subroutine
@@ -101,9 +104,61 @@ ST R7, BACKUP_R7_3700
 LD R3, start_memory_place
 LD R4, start_memory_place
 ADD R4, R4, R5
+ADD R4, R4, #-1
 
-LOOP
-	LDR R3, R3, #0
-	NOT R3, R3
+LOOP_1
+	NOT R4, R4
+	ADD R4, R4, #1
+	ADD R4, R3, R4
+	BRz PALINDROME
+	LD R4, start_memory_place
+	ADD R4, R4, R5
+	ADD R4, R4, #-1
+	NOT R4, R4
+	ADD R4, R4, #1
+	ADD R6, R3, R4
+	LD R4, one_1
+	NOT R4, R4
+	ADD R4, R4, #1
+	ADD R4, R6, R4
+	BRz PALINDROME
+	LD R4, start_memory_place
+	ADD R4, R4, R5
+	ADD R4, R4, #-1
+	LDR R2, R3, #0
+	NOT R2, R2
+	ADD R2, R2, #1
+	LDR R6, R4, #0
+	ADD R6, R6, R2
+	BRnp NOT_PALINDROME
 	ADD R3, R3, #1
-	ADD R2, 	
+	ADD R5, R5, #-1
+	BR LOOP_1
+END_LOOP_1
+
+NOT_PALINDROME
+	LD R4, zero_1
+	BR END_SUB_3700
+
+PALINDROME
+	LD R4, one_1
+	BR END_SUB_3700
+
+END_SUB_3700
+
+LD R0, BACKUP_R0_3700
+LD R5, BACKUP_R5_3700
+LD R7, BACKUP_R7_3700
+
+RET
+
+;-------------------------
+;data palindrome subroutine
+;-------------------------
+
+BACKUP_R0_3700					.blkw						#1
+BACKUP_R5_3700					.blkw						#1
+BACKUP_R7_3700					.blkw						#1
+start_memory_place			.FILL						x5000
+one_1								.FILL						#1
+zero_1							.FILL						#0

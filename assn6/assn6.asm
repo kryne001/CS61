@@ -392,13 +392,17 @@ PUTS
 GETC
 OUT
 ST R0, machine_selected
+LD R3, converter_backwards
+NOT R3, R3
+ADD R3, R3, #1
+ADD R0, R0, R3
 
 LD R2, sixteen_6
 NOT R0, R0
 ADD R0, R0, #1
 ADD R2, R2, R0
-ADD R2, R2, #-1
-
+;ADD R2, R2, #-1
+BRz END_LOOP_6
 LOOP_6
 	ADD R1, R1, R1
 	ADD R2, R2, #-1
@@ -441,14 +445,14 @@ BACKUP_R7_3800					.blkw				#1
 mem_6								.FILL				x5000
 zero_6							.FILL				#0
 out_3800_message				.STRINGZ			"which machine? "
-machine_selected				.blkw				#1
+machine_selected				.FILL				#2
 sixteen_6						.FILL				#16
 start_busy_message			.STRINGZ			"\nMachine "
 end_busy_message				.STRINGZ			" is busy.\n"
 start_free_message			.STRINGZ			"\nMachine "
 end_free_message				.STRINGZ			" is free.\n"
-
-
+converter_backwards			.FILL				#48
+ten								.FILL				#10
 
 .orig x5000
 ST R7, BACKUP_R7_5000
@@ -458,5 +462,5 @@ LD R5, BUSYNESS
 LD R7, BACKUP_R7_5000
 RET
 
-BUSYNESS					.FILL					x61A3
+BUSYNESS					.FILL					x0F0F
 BACKUP_R7_5000			.BLKW					#1
